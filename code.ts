@@ -6,6 +6,9 @@ setTimeout(function(){
   const radius = 4
   const frame = figma.createFrame()
 
+  // frame.x = figma.viewport.center.x - frame.width / 2
+  // frame.y = figma.viewport.center.y - frame.height / 2
+
   const pink1 = 1
   const pink2 = 0.3
   const pink3 = 0.5
@@ -25,9 +28,11 @@ setTimeout(function(){
       const parentX = node.x
       const parentY = node.y
 
+      console.log(parentX)
+
       rect.x = node.x
       rect.y = node.y
-      rect.resize(node.width,node.height)
+      rect.resize(width,height)
       rect.fills = [{type: 'SOLID', color: {r: 1, g: 1, b: 1}}]
       rect.strokes = [{type: 'SOLID', color: {r: pink1, g: pink2, b: pink3}}]
       rect.topRightRadius = radius
@@ -39,6 +44,18 @@ setTimeout(function(){
       
       node.children.forEach(child => {
 
+        let nodeX = parentX + child.x
+        let nodeY = parentY + child.y
+
+        console.log(nodeX)
+
+        if( "children" in child) {
+          child.children.forEach(childInner => {
+            // console.log(childInner.name)
+            
+          });
+        }
+
         if (child.type === 'VECTOR') {
           const vect = figma.createVector()
           const height = child.height
@@ -49,7 +66,7 @@ setTimeout(function(){
           vect.resize(width,height)
           vect.vectorNetwork = child.vectorNetwork
           vect.x = newParentX + child.x
-          vect.y = newParentX + child.y
+          vect.y = newParentY + child.y
           vect.strokeWeight = 0
           vect.fills = [{type: 'SOLID', color: {r: pink1, g: pink2, b: pink3}}]
           frame.appendChild(vect)
@@ -78,6 +95,42 @@ setTimeout(function(){
             rect.bottomLeftRadius = radius
             rect.bottomRightRadius = radius
             frame.appendChild(rect)
+          }
+        }
+
+        if (child.type === 'GROUP') {
+          
+
+          if( "children" in child) {
+            child.children.forEach(childInner => {
+
+              if (childInner.type === 'INSTANCE') {
+
+                let childInnerX = parentX + childInner.x
+                let childInnerY = parentY + childInner.y
+                if( "children" in childInner) {
+                  childInner.children.forEach(childInnerInner => {
+                    
+                    if (childInnerInner.type === 'VECTOR') {
+                      const vect = figma.createVector()
+                      const height = childInnerInner.height
+                      const width = childInnerInner.width
+                      let newParentX = parentX
+                      let newParentY = parentY
+            
+                      vect.resize(width,height)
+                      vect.vectorNetwork = childInnerInner.vectorNetwork
+                      vect.x = childInnerX + childInnerInner.x
+                      vect.y = childInnerY + childInnerInner.y
+                      vect.strokeWeight = 0
+                      vect.fills = [{type: 'SOLID', color: {r: pink1, g: pink2, b: pink3}}]
+                      frame.appendChild(vect)
+                    }
+
+                  })
+                }
+              }
+            });
           }
         }
 
