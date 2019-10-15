@@ -17,13 +17,29 @@ setTimeout(function(){
     
     if (node.type === "INSTANCE" ) {
 
-      const rect = figma.createRectangle()
-
       const height = node.height
       const width = node.width
       const parentX = node.x
       const parentY = node.y
 
+
+      // if (node.backgrounds.length >= 1){
+      //   const rect = figma.createRectangle()
+      //   rect.name = node.name
+      //   rect.x = node.x
+      //   rect.y = node.y
+      //   rect.resize(width,height)
+      //   rect.fills = [{type: 'SOLID', color: {r: 1, g: 1, b: 1}}]
+      //   rect.strokes = [{type: 'SOLID', color: {r: pink1, g: pink2, b: pink3}}]
+      //   rect.topRightRadius = radius
+      //   rect.topLeftRadius = radius
+      //   rect.bottomLeftRadius = radius
+      //   rect.bottomRightRadius = radius
+
+      //   frame.appendChild(rect)
+      // }
+
+      const rect = figma.createRectangle()
       rect.name = node.name
       rect.x = node.x
       rect.y = node.y
@@ -36,6 +52,8 @@ setTimeout(function(){
       rect.bottomRightRadius = radius
 
       frame.appendChild(rect)
+
+      
       
       
       node.children.forEach(child => {
@@ -72,7 +90,7 @@ setTimeout(function(){
           let nestedX = child.x
           let nestedY = child.y
 
-          console.log(child.x, child.y)
+          // console.log(child.x, child.y)
 
           if (child.visible === true) {
             
@@ -99,7 +117,7 @@ setTimeout(function(){
             child.children.forEach(childInner => {
               if (childInner.type === 'BOOLEAN_OPERATION') {
                       
-                console.log(childInner.x, childInner.y)
+                // console.log(childInner.x, childInner.y)
 
                 if( "children" in childInner) {
 
@@ -114,9 +132,10 @@ setTimeout(function(){
                       vect.vectorNetwork = childInnerInner.vectorNetwork
                       vect.x = nestedX + childInnerInner.x
                       vect.y = nestedY + childInnerInner.y
-                      console.log(childInnerInner.x, childInnerInner.y)
-                      vect.strokeWeight = 0
-                      vect.fills = [{type: 'SOLID', color: {r: pink1, g: pink2, b: pink3}}]
+                      // console.log(childInnerInner.x, childInnerInner.y)
+                      vect.strokeWeight = 1
+                      // vect.fills = [{type: 'SOLID', color: {r: pink1, g: pink2, b: pink3}}]
+                      vect.strokes = [{type: 'SOLID', color: {r: pink1, g: pink2, b: pink3}}]
 
                       frame.appendChild(vect)
                     }
@@ -205,8 +224,9 @@ setTimeout(function(){
                       
                       rect.x = childInnerX + childInnerInner.x
                       rect.y = childInnerY + childInnerInner.y
-                      rect.strokeWeight = 0
-                      rect.fills = [{type: 'SOLID', color: {r: pink1, g: pink2, b: pink3}}]
+                      rect.strokeWeight = 2
+                      rect.fills = [{type: 'SOLID', color: {r: 1, g: 1, b: 1}}]
+                      rect.strokes = [{type: 'SOLID', color: {r: pink1, g: pink2, b: pink3}}]
 
                       frame.appendChild(rect)
                     }
@@ -228,8 +248,10 @@ setTimeout(function(){
                             vect.vectorNetwork = childInnerInnerInner.vectorNetwork
                             vect.x = childInnerX + childInnerInnerInner.x
                             vect.y = childInnerY + childInnerInnerInner.y
-                            vect.strokeWeight = 0
-                            vect.fills = [{type: 'SOLID', color: {r: pink1, g: pink2, b: pink3}}]
+                            vect.strokeWeight = 1
+                            // vect.fills = [{type: 'SOLID', color: {r: pink1, g: pink2, b: pink3}}]
+                            vect.strokes = [{type: 'SOLID', color: {r: pink1, g: pink2, b: pink3}}]
+
       
                             frame.appendChild(vect)
                           }
