@@ -13,12 +13,11 @@ setTimeout(function () {
     nodes.forEach(node => {
         if (node.type === "INSTANCE") {
             const rect = figma.createRectangle();
-            rect.name = node.name;
             const height = node.height;
             const width = node.width;
             const parentX = node.x;
             const parentY = node.y;
-            console.log(parentX);
+            rect.name = node.name;
             rect.x = node.x;
             rect.y = node.y;
             rect.resize(width, height);
@@ -32,12 +31,7 @@ setTimeout(function () {
             node.children.forEach(child => {
                 let nodeX = parentX + child.x;
                 let nodeY = parentY + child.y;
-                console.log(nodeX);
-                if ("children" in child) {
-                    child.children.forEach(childInner => {
-                        // console.log(childInner.name)
-                    });
-                }
+                console.log(nodeX, nodeY, child.name);
                 if (child.type === 'VECTOR') {
                     const vect = figma.createVector();
                     const height = child.height;
@@ -57,7 +51,6 @@ setTimeout(function () {
                         const rect = figma.createRectangle();
                         const height = child.height;
                         const width = child.width;
-                        let parent = child.parent;
                         let newParentX = parentX;
                         let newParentY = parentY;
                         rect.name = child.name;
@@ -74,8 +67,33 @@ setTimeout(function () {
                     }
                 }
                 if (child.type === 'GROUP') {
+                    let newParentX = parentX;
+                    let newParentY = parentY;
+                    console.log(newParentX, newParentY, child.name);
                     if ("children" in child) {
                         child.children.forEach(childInner => {
+                            if (childInner.type === 'TEXT') {
+                                if (childInner.visible === true) {
+                                    const textBlock = figma.createText();
+                                    const height = childInner.height;
+                                    const width = childInner.width;
+                                    textBlock.name = childInner.name;
+                                    textBlock.resize(width, height);
+                                    textBlock.x = newParentX + childInner.x;
+                                    textBlock.y = newParentY + childInner.y;
+                                    console.log(textBlock.x, textBlock.y, textBlock.name);
+                                    textBlock.characters = childInner.characters;
+                                    textBlock.fills = [{ type: 'SOLID', color: { r: pink1, g: pink2, b: pink3 } }];
+                                    textBlock.fontSize = childInner.fontSize;
+                                    textBlock.lineHeight = childInner.lineHeight;
+                                    textBlock.paragraphSpacing = childInner.paragraphSpacing;
+                                    textBlock.textAlignHorizontal = childInner.textAlignHorizontal;
+                                    textBlock.textAlignVertical = childInner.textAlignVertical;
+                                    textBlock.textCase = childInner.textCase;
+                                    textBlock.textDecoration = childInner.textDecoration;
+                                    frame.appendChild(textBlock);
+                                }
+                            }
                             if (childInner.type === 'INSTANCE') {
                                 let childInnerX = parentX + childInner.x;
                                 let childInnerY = parentY + childInner.y;
@@ -85,8 +103,6 @@ setTimeout(function () {
                                             const vect = figma.createVector();
                                             const height = childInnerInner.height;
                                             const width = childInnerInner.width;
-                                            let newParentX = parentX;
-                                            let newParentY = parentY;
                                             vect.resize(width, height);
                                             vect.vectorNetwork = childInnerInner.vectorNetwork;
                                             vect.x = childInnerX + childInnerInner.x;
@@ -117,6 +133,7 @@ setTimeout(function () {
                         textBlock.fills = [{ type: 'SOLID', color: { r: pink1, g: pink2, b: pink3 } }];
                         textBlock.fontSize = child.fontSize;
                         textBlock.paragraphSpacing = child.paragraphSpacing;
+                        textBlock.lineHeight = child.lineHeight;
                         textBlock.textAlignHorizontal = child.textAlignHorizontal;
                         textBlock.textAlignVertical = child.textAlignVertical;
                         textBlock.textCase = child.textCase;
