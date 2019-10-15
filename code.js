@@ -3,8 +3,6 @@ setTimeout(function () {
     const nodes = figma.currentPage.selection;
     const radius = 4;
     const frame = figma.createFrame();
-    // frame.x = figma.viewport.center.x - frame.width / 2
-    // frame.y = figma.viewport.center.y - frame.height / 2
     const pink1 = 1;
     const pink2 = 0.3;
     const pink3 = 0.5;
@@ -31,7 +29,7 @@ setTimeout(function () {
             node.children.forEach(child => {
                 let nodeX = parentX + child.x;
                 let nodeY = parentY + child.y;
-                console.log(nodeX, nodeY, child.name);
+                // console.log(nodeX,nodeY, child.name)
                 if (child.type === 'VECTOR') {
                     const vect = figma.createVector();
                     const height = child.height;
@@ -47,12 +45,15 @@ setTimeout(function () {
                     frame.appendChild(vect);
                 }
                 if (child.type === 'INSTANCE') {
+                    let newParentX = parentX;
+                    let newParentY = parentY;
+                    let nestedX = child.x;
+                    let nestedY = child.y;
+                    console.log(child.x, child.y);
                     if (child.visible === true) {
                         const rect = figma.createRectangle();
                         const height = child.height;
                         const width = child.width;
-                        let newParentX = parentX;
-                        let newParentY = parentY;
                         rect.name = child.name;
                         rect.resize(width, height);
                         rect.x = newParentX + child.x;
@@ -65,11 +66,35 @@ setTimeout(function () {
                         rect.bottomRightRadius = radius;
                         frame.appendChild(rect);
                     }
+                    if ("children" in child) {
+                        child.children.forEach(childInner => {
+                            if (childInner.type === 'BOOLEAN_OPERATION') {
+                                console.log(childInner.x, childInner.y);
+                                if ("children" in childInner) {
+                                    childInner.children.forEach(childInnerInner => {
+                                        if (childInnerInner.type === 'VECTOR') {
+                                            const vect = figma.createVector();
+                                            const height = childInnerInner.height;
+                                            const width = childInnerInner.width;
+                                            vect.resize(width, height);
+                                            vect.vectorNetwork = childInnerInner.vectorNetwork;
+                                            vect.x = nestedX + childInnerInner.x;
+                                            vect.y = nestedY + childInnerInner.y;
+                                            console.log(childInnerInner.x, childInnerInner.y);
+                                            vect.strokeWeight = 0;
+                                            vect.fills = [{ type: 'SOLID', color: { r: pink1, g: pink2, b: pink3 } }];
+                                            frame.appendChild(vect);
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
                 }
                 if (child.type === 'GROUP') {
                     let newParentX = parentX;
                     let newParentY = parentY;
-                    console.log(newParentX, newParentY, child.name);
+                    // console.log(newParentX,newParentY, child.name)
                     if ("children" in child) {
                         child.children.forEach(childInner => {
                             if (childInner.type === 'TEXT') {
@@ -81,7 +106,7 @@ setTimeout(function () {
                                     textBlock.resize(width, height);
                                     textBlock.x = newParentX + childInner.x;
                                     textBlock.y = newParentY + childInner.y;
-                                    console.log(textBlock.x, textBlock.y, textBlock.name);
+                                    // console.log(textBlock.x,textBlock.y, textBlock.name)
                                     textBlock.characters = childInner.characters;
                                     textBlock.fills = [{ type: 'SOLID', color: { r: pink1, g: pink2, b: pink3 } }];
                                     textBlock.fontSize = childInner.fontSize;
@@ -110,6 +135,36 @@ setTimeout(function () {
                                             vect.strokeWeight = 0;
                                             vect.fills = [{ type: 'SOLID', color: { r: pink1, g: pink2, b: pink3 } }];
                                             frame.appendChild(vect);
+                                        }
+                                        if (childInnerInner.type === 'ELLIPSE') {
+                                            const rect = figma.createEllipse();
+                                            const height = childInnerInner.height;
+                                            const width = childInnerInner.width;
+                                            rect.resize(width, height);
+                                            rect.x = childInnerX + childInnerInner.x;
+                                            rect.y = childInnerY + childInnerInner.y;
+                                            rect.strokeWeight = 0;
+                                            rect.fills = [{ type: 'SOLID', color: { r: pink1, g: pink2, b: pink3 } }];
+                                            frame.appendChild(rect);
+                                        }
+                                        if (childInnerInner.type === 'BOOLEAN_OPERATION') {
+                                            // console.log(childInnerInner.name)
+                                            if ("children" in childInnerInner) {
+                                                childInnerInner.children.forEach(childInnerInnerInner => {
+                                                    if (childInnerInnerInner.type === 'VECTOR') {
+                                                        const vect = figma.createVector();
+                                                        const height = childInnerInnerInner.height;
+                                                        const width = childInnerInnerInner.width;
+                                                        vect.resize(width, height);
+                                                        vect.vectorNetwork = childInnerInnerInner.vectorNetwork;
+                                                        vect.x = childInnerX + childInnerInnerInner.x;
+                                                        vect.y = childInnerY + childInnerInnerInner.y;
+                                                        vect.strokeWeight = 0;
+                                                        vect.fills = [{ type: 'SOLID', color: { r: pink1, g: pink2, b: pink3 } }];
+                                                        frame.appendChild(vect);
+                                                    }
+                                                });
+                                            }
                                         }
                                     });
                                 }
