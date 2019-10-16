@@ -91,7 +91,7 @@ setTimeout(function(){
     let parentY = node.y
     let parentName = node.name
     
-    if (node.type === 'INSTANCE') {
+    if (node.type === 'INSTANCE' || node.type ==='COMPONENT') {
 
       if (node.backgrounds.length >=1) {
         rectOutline(node,0,0)
@@ -182,8 +182,6 @@ setTimeout(function(){
 
           if(child.visible === true) {
 
-            
-            
             if( "children" in child) {
             
               child.children.forEach(childInner => {
@@ -254,6 +252,11 @@ setTimeout(function(){
                                   vectorOutline(childInnerInnerInner,parentInnerX,parentInnerY)
                                 }
                               }
+                              if (childInnerInnerInner.type === 'BOOLEAN_OPERATION') {
+                                if (childInnerInnerInner.visible === true) {
+                                  rectOutline(childInnerInnerInner,parentInnerX,parentInnerY)
+                                }
+                              }
                             })
                           }
                         }
@@ -261,6 +264,22 @@ setTimeout(function(){
                     })
                   }
                 }
+
+                if (childInner.type === 'GROUP') {
+
+                  if( "children" in childInner) {
+
+                    childInner.children.forEach(childInnerInner => {
+                      if (childInnerInner.type === 'INSTANCE') {
+                        if (childInnerInner.visible === true) {
+                          rectOutline(childInnerInner,parentX,parentY)
+                        }
+                      }
+                    })
+                  }
+
+                }
+
               });
             }
           }
