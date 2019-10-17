@@ -18,3 +18,4 @@ A Figma plugin to make your designs go from hi-fi to lo-fi
 
 - [ ] More Elegant way to handle sweeping through nested items
 - [ ] Stop from rendering elements whos parents are not visible
+- [ ] Figure out how to resize the newly created frame

@@ -19,6 +19,7 @@ setTimeout(function () {
         rect.name = node.name;
         rect.x = newX;
         rect.y = newY;
+        rect.rotation = node.rotation;
         rect.resize(node.width, node.height);
         rect.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
         rect.strokes = [{ type: 'SOLID', color: { r: pink1, g: pink2, b: pink3 } }];
@@ -35,6 +36,7 @@ setTimeout(function () {
         let transformPos = node.absoluteTransform;
         let newX = transformPos[0][2];
         let newY = transformPos[1][2];
+        vect.rotation = node.rotation;
         vect.resize(width, height);
         vect.vectorNetwork = node.vectorNetwork;
         vect.x = newX;
@@ -50,6 +52,7 @@ setTimeout(function () {
         let transformPos = node.absoluteTransform;
         let newX = transformPos[0][2];
         let newY = transformPos[1][2];
+        textBlock.rotation = node.rotation;
         textBlock.name = node.name;
         textBlock.resize(width, height);
         textBlock.x = newX;
@@ -72,6 +75,7 @@ setTimeout(function () {
         let transformPos = node.absoluteTransform;
         let newX = transformPos[0][2];
         let newY = transformPos[1][2];
+        ellip.rotation = node.rotation;
         ellip.resize(width, height);
         ellip.x = newX;
         ellip.y = newY;
@@ -81,56 +85,58 @@ setTimeout(function () {
         frame.appendChild(ellip);
     }
     // determine parameters for showing
-    function drawItems(node) {
-        if (node.type === 'INSTANCE' || node.type === 'COMPONENT') {
-            if (node.visible === true) {
-                if (node.backgrounds.length >= 1) {
+    function drawItems(node, nodeParent) {
+        if (nodeParent.visible === true) {
+            if (node.type === 'INSTANCE' || node.type === 'COMPONENT') {
+                if (node.visible === true) {
+                    if (node.backgrounds.length >= 1) {
+                        rectOutline(node);
+                    }
+                }
+            }
+            if (node.type === 'VECTOR') {
+                if (node.visible === true) {
+                    vectorOutline(node);
+                }
+            }
+            if (node.type === 'RECTANGLE') {
+                if (node.visible === true && node.fills.length >= 1) {
                     rectOutline(node);
                 }
             }
-        }
-        if (node.type === 'VECTOR') {
-            if (node.visible === true) {
-                vectorOutline(node);
+            if (node.type === 'ELLIPSE') {
+                if (node.visible === true) {
+                    ellipseOutline(node);
+                }
             }
-        }
-        if (node.type === 'RECTANGLE') {
-            if (node.visible === true) {
-                rectOutline(node);
-            }
-        }
-        if (node.type === 'ELLIPSE') {
-            if (node.visible === true) {
-                ellipseOutline(node);
-            }
-        }
-        if (node.type === 'TEXT') {
-            if (node.visible === true) {
-                textOutline(node);
+            if (node.type === 'TEXT') {
+                if (node.visible === true) {
+                    textOutline(node);
+                }
             }
         }
     }
     // execute
     function recurse(parents) {
         parents.forEach(parent => {
-            drawItems(parent);
+            drawItems(parent, parent);
             parent.children.forEach(child => {
-                drawItems(child);
+                drawItems(child, parent);
                 if ("children" in child) {
                     child.children.forEach(granchild => {
-                        drawItems(granchild);
+                        drawItems(granchild, child);
                         if ("children" in granchild) {
                             granchild.children.forEach(greatgranchild => {
-                                drawItems(greatgranchild);
+                                drawItems(greatgranchild, granchild);
                                 if ("children" in greatgranchild) {
                                     greatgranchild.children.forEach(greatgreatgranchild => {
-                                        drawItems(greatgreatgranchild);
+                                        drawItems(greatgreatgranchild, greatgranchild);
                                         if ("children" in greatgreatgranchild) {
                                             greatgreatgranchild.children.forEach(greatgreatgreatgranchild => {
-                                                drawItems(greatgreatgreatgranchild);
+                                                drawItems(greatgreatgreatgranchild, greatgreatgranchild);
                                                 if ("children" in greatgreatgreatgranchild) {
                                                     greatgreatgreatgranchild.children.forEach(greatgreatgreatgreatgranchild => {
-                                                        drawItems(greatgreatgreatgreatgranchild);
+                                                        drawItems(greatgreatgreatgreatgranchild, greatgreatgreatgranchild);
                                                     });
                                                 }
                                             });
