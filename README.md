@@ -1,4 +1,4 @@
-![Wire Box](https://d2ddoduugvun08.cloudfront.net/items/1S1y3I0k3h1x3A0M1W3K/cover.png "Wire Box")
+![Wire Box](https://d2ddoduugvun08.cloudfront.net/items/3T13420R151f3z36032C/cover.png "Wire Box")
 
 A Figma plugin to make your designs go from hi-fi to lo-fi
 

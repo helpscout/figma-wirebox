@@ -126,7 +126,6 @@ setTimeout(function () {
             if (node.type === 'RECTANGLE') {
                 if (node.visible === true && node.fills.length >= 1 && node.width >= 0.1 && node.height >= 0.1 && node.isMask !== true && node.name !== 'Bounds' && node.name !== 'bounds') {
                     rectOutline(node);
-                    console.log(node.name);
                 }
                 if (node.visible === true && node.strokeWeight >= 1.1 && node.name !== 'Bounds' && node.name !== 'bounds') {
                     rectOutline(node);
