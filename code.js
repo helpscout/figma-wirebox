@@ -140,9 +140,15 @@ setTimeout(function () {
                     if (nodeParent.visible === true && nodeGrandParent.visible === true) {
                         if (node.type === 'INSTANCE' || node.type === 'COMPONENT') {
                             if (node.visible === true) {
-                                if (node.backgrounds.length >= 1 && node.width >= 0.1 && node.height >= 0.1) {
-                                    rectOutline(node);
+                                const arrayBg = node.backgrounds;
+                                function contains(arr, key, val) {
+                                    for (var i = 0; i < arr.length; i++) {
+                                        if (arr[i][key] === val)
+                                            return rectOutline(node);
+                                    }
+                                    return false;
                                 }
+                                contains(arrayBg, "visible", true);
                             }
                         }
                         if (node.type === 'VECTOR') {
