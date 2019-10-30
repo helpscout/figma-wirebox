@@ -6,7 +6,7 @@ setTimeout(function(){
   let selectedLayers = nodes
   let nodesParent = nodes
 
-  // arrays for storing heights, widths, and new items created by the plugin
+  // Arrays for storing heights, widths, and new items created by the plugin
 
   let arrayParentX = []
   let arrayParentY = []
@@ -24,7 +24,7 @@ setTimeout(function(){
     
     nodesParent.forEach(mainParent => {
 
-      // ensure that we only fire the plugin when frames, components or instances are selected
+      // Ensure that we only fire the plugin when frames, components or instances are selected
       
       if (mainParent.type === 'FRAME' || mainParent.type === 'INSTANCE' || mainParent.type === 'COMPONENT') {
 
@@ -41,7 +41,7 @@ setTimeout(function(){
         frame.name = "Wire Box"
         frame.clipsContent = false
 
-        // define shape types
+        // Define shape types
 
         function rectOutline(node) {
           const rect = figma.createRectangle()
@@ -194,7 +194,7 @@ setTimeout(function(){
           arrayAll.push(poly)
         }
 
-        // these functions dive deeper into the configuration of layers - sometimes layers have fills but arent visible for example
+        // These functions dive deeper into the configuration of layers - sometimes layers have fills but arent visible for example
 
         function containsBg(arr,key,val,obj) {
           for (var i = 0; i < arr.length; i++) {
@@ -217,7 +217,7 @@ setTimeout(function(){
           return false;
         }
 
-        // determine parameters for showing
+        // Determine parameters for showing
 
         function drawItems(node,nodeParent,nodeGrandParent) {
 
@@ -230,7 +230,7 @@ setTimeout(function(){
               }
             }
 
-            // I check the with and height of the nodes as sometimes they can have a 0 height or width - which might just be a bug from Figmas end
+            // Check the width and height of the nodes as sometimes they can have a 0 height or width - which might just be a bug from Figmas end
 
             if (node.type === 'VECTOR') {
               if (node.visible === true && node.width >= 0.1 && node.height >= 0.1) {       
@@ -284,7 +284,7 @@ setTimeout(function(){
           
           parents.forEach(parent => {
 
-            // I check 3 levels of depth for each node - the current node, its parent, and its grandparent. The Figma will return a node as visible, however its parent, for example, might not be. If so we don't want to render said node.
+            // Checks 3 levels of depth for each node - the current node, its parent, and its grandparent. The Figma API will return a node as visible, however its parent, for example, might not be. If so we don't want to render said node.
 
             drawItems(parent,parent,parent)
 
@@ -345,7 +345,7 @@ setTimeout(function(){
             })
           })
 
-          // some math for determining the new size of the created frame
+          // Some math for determining the new size of the created frame
 
           let frameWidth = Math.max(...arrayWidth)
           let frameheight = Math.max(...arrayHeight)
@@ -354,7 +354,7 @@ setTimeout(function(){
           frame.x = frameX + frameWidth + 100
           frame.y = frameY 
           
-          // group all the newly created layers, which are then placed at 0 0 so everythings neat and tidy
+          // Group all the newly created layers, which are then placed at 0x 0y so everythings neat and tidy
           
           figma.group(arrayAll,frame)
           const location = figma.group(arrayAll,frame)

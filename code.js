@@ -3,7 +3,7 @@ setTimeout(function () {
     const nodes = figma.currentPage.selection;
     let selectedLayers = nodes;
     let nodesParent = nodes;
-    // arrays for storing heights, widths, and new items created by the plugin
+    // Arrays for storing heights, widths, and new items created by the plugin
     let arrayParentX = [];
     let arrayParentY = [];
     let arrayAll = [];
@@ -15,7 +15,7 @@ setTimeout(function () {
     }
     else {
         nodesParent.forEach(mainParent => {
-            // ensure that we only fire the plugin when frames, components or instances are selected
+            // Ensure that we only fire the plugin when frames, components or instances are selected
             if (mainParent.type === 'FRAME' || mainParent.type === 'INSTANCE' || mainParent.type === 'COMPONENT') {
                 const frameX = mainParent.x;
                 const frameY = mainParent.y;
@@ -27,7 +27,7 @@ setTimeout(function () {
                 const pink3 = 0.8;
                 frame.name = "Wire Box";
                 frame.clipsContent = false;
-                // define shape types
+                // Define shape types
                 function rectOutline(node) {
                     const rect = figma.createRectangle();
                     let transformPos = node.absoluteTransform;
@@ -149,7 +149,7 @@ setTimeout(function () {
                     frame.appendChild(poly);
                     arrayAll.push(poly);
                 }
-                // these functions dive deeper into the configuration of layers - sometimes layers have fills but arent visible for example
+                // These functions dive deeper into the configuration of layers - sometimes layers have fills but arent visible for example
                 function containsBg(arr, key, val, obj) {
                     for (var i = 0; i < arr.length; i++) {
                         if (arr[i][key] === val)
@@ -171,7 +171,7 @@ setTimeout(function () {
                     }
                     return false;
                 }
-                // determine parameters for showing
+                // Determine parameters for showing
                 function drawItems(node, nodeParent, nodeGrandParent) {
                     if (nodeParent.visible === true && nodeGrandParent.visible === true) {
                         if (node.type === 'INSTANCE' || node.type === 'COMPONENT') {
@@ -180,7 +180,7 @@ setTimeout(function () {
                                 containsBg(arrayBg, "visible", true, node);
                             }
                         }
-                        // I check the with and height of the nodes as sometimes they can have a 0 height or width - which might just be a bug from Figmas end
+                        // Check the width and height of the nodes as sometimes they can have a 0 height or width - which might just be a bug from Figmas end
                         if (node.type === 'VECTOR') {
                             if (node.visible === true && node.width >= 0.1 && node.height >= 0.1) {
                                 vectorOutline(node);
@@ -223,7 +223,7 @@ setTimeout(function () {
                     let arrayWidth = [];
                     let arrayHeight = [];
                     parents.forEach(parent => {
-                        // I check 3 levels of depth for each node - the current node, its parent, and its grandparent. The Figma will return a node as visible, however its parent, for example, might not be. If so we don't want to render said node.
+                        // Checks 3 levels of depth for each node - the current node, its parent, and its grandparent. The Figma API will return a node as visible, however its parent, for example, might not be. If so we don't want to render said node.
                         drawItems(parent, parent, parent);
                         arrayWidth.push(parent.width);
                         arrayHeight.push(parent.height);
@@ -271,13 +271,13 @@ setTimeout(function () {
                             }
                         });
                     });
-                    // some math for determining the new size of the created frame
+                    // Some math for determining the new size of the created frame
                     let frameWidth = Math.max(...arrayWidth);
                     let frameheight = Math.max(...arrayHeight);
                     frame.resize(frameWidth, frameheight);
                     frame.x = frameX + frameWidth + 100;
                     frame.y = frameY;
-                    // group all the newly created layers, which are then placed at 0 0 so everythings neat and tidy
+                    // Group all the newly created layers, which are then placed at 0x 0y so everythings neat and tidy
                     figma.group(arrayAll, frame);
                     const location = figma.group(arrayAll, frame);
                     location.x = 0;
