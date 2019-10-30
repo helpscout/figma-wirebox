@@ -3,6 +3,9 @@ setTimeout(function () {
     const nodes = figma.currentPage.selection;
     let selectedLayers = nodes;
     let nodesParent = nodes;
+    let arrayParentX = [];
+    let arrayParentY = [];
+    let arrayAll = [];
     function errorMsg() {
         figma.closePlugin('⚠️ Please select a Frame, Component, or Instance to run Wire Box ⚠️');
     }
@@ -12,11 +15,14 @@ setTimeout(function () {
     else {
         nodesParent.forEach(mainParent => {
             if (mainParent.type === 'FRAME' || mainParent.type === 'INSTANCE' || mainParent.type === 'COMPONENT') {
+                const frameX = mainParent.x;
+                const frameY = mainParent.y;
+                arrayParentX.push(frameX);
+                arrayParentY.push(frameY);
                 const frame = figma.createFrame();
                 const pink1 = 1;
                 const pink2 = 0.15;
                 const pink3 = 0.8;
-                const radius = 4;
                 frame.name = "Wire Box";
                 frame.clipsContent = false;
                 // define shape types
@@ -39,6 +45,7 @@ setTimeout(function () {
                         rect.bottomRightRadius = node.bottomRightRadius;
                     }
                     frame.appendChild(rect);
+                    arrayAll.push(rect);
                 }
                 function rectOutlineNoBg(node) {
                     const rect = figma.createRectangle();
@@ -59,6 +66,7 @@ setTimeout(function () {
                         rect.bottomRightRadius = node.bottomRightRadius;
                     }
                     frame.appendChild(rect);
+                    arrayAll.push(rect);
                 }
                 function vectorOutline(node) {
                     const vect = figma.createVector();
@@ -75,6 +83,7 @@ setTimeout(function () {
                     vect.strokeWeight = 1;
                     vect.strokes = [{ type: 'SOLID', color: { r: pink1, g: pink2, b: pink3 } }];
                     frame.appendChild(vect);
+                    arrayAll.push(vect);
                 }
                 function textOutline(node) {
                     const textBlock = figma.createText();
@@ -102,6 +111,7 @@ setTimeout(function () {
                     textBlock.textAlignVertical = node.textAlignVertical;
                     textBlock.textCase = node.textCase;
                     frame.appendChild(textBlock);
+                    arrayAll.push(textBlock);
                 }
                 function ellipseOutline(node) {
                     const ellip = figma.createEllipse();
@@ -118,6 +128,7 @@ setTimeout(function () {
                     ellip.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
                     ellip.strokes = [{ type: 'SOLID', color: { r: pink1, g: pink2, b: pink3 } }];
                     frame.appendChild(ellip);
+                    arrayAll.push(ellip);
                 }
                 function polygonOutline(node) {
                     const poly = figma.createPolygon();
@@ -134,6 +145,28 @@ setTimeout(function () {
                     poly.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
                     poly.strokes = [{ type: 'SOLID', color: { r: pink1, g: pink2, b: pink3 } }];
                     frame.appendChild(poly);
+                    arrayAll.push(poly);
+                }
+                function containsBg(arr, key, val, obj) {
+                    for (var i = 0; i < arr.length; i++) {
+                        if (arr[i][key] === val)
+                            return rectOutline(obj);
+                    }
+                    return false;
+                }
+                function containsDual(arr, key, val, key2, val2, obj) {
+                    for (var i = 0; i < arr.length; i++) {
+                        if (arr[i][key] === val && arr[i][key2] === val2)
+                            return rectOutline(obj);
+                    }
+                    return false;
+                }
+                function containsDualOutline(arr, key, val, key2, val2, obj) {
+                    for (var i = 0; i < arr.length; i++) {
+                        if (arr[i][key] === val && arr[i][key2] === val2)
+                            return rectOutlineNoBg(obj);
+                    }
+                    return false;
                 }
                 // determine parameters for showing
                 function drawItems(node, nodeParent, nodeGrandParent) {
@@ -141,14 +174,7 @@ setTimeout(function () {
                         if (node.type === 'INSTANCE' || node.type === 'COMPONENT') {
                             if (node.visible === true) {
                                 const arrayBg = node.backgrounds;
-                                function contains(arr, key, val) {
-                                    for (var i = 0; i < arr.length; i++) {
-                                        if (arr[i][key] === val)
-                                            return rectOutline(node);
-                                    }
-                                    return false;
-                                }
-                                contains(arrayBg, "visible", true);
+                                containsBg(arrayBg, "visible", true, node);
                             }
                         }
                         if (node.type === 'VECTOR') {
@@ -162,14 +188,18 @@ setTimeout(function () {
                             }
                         }
                         if (node.type === 'RECTANGLE') {
-                            if (node.visible === true && node.fills.length >= 1 && node.width >= 0.1 && node.height >= 0.1 && node.isMask !== true && node.name !== 'Bounds' && node.name !== 'bounds') {
-                                rectOutline(node);
+                            if (node.visible === true && node.fills.length >= 1 && node.width >= 0.1 && node.height >= 0.1 && node.opacity >= 0.9 && node.isMask !== true && node.name !== 'Bounds' && node.name !== 'bounds') {
+                                const arrayBg = node.fills;
+                                containsDual(arrayBg, "type", "SOLID", "visible", true, node);
+                                containsDual(arrayBg, "type", "IMAGE", "visible", true, node);
                             }
                             if (node.visible === true && node.strokeWeight >= 1.1 && node.name !== 'Bounds' && node.name !== 'bounds') {
-                                rectOutline(node);
+                                const arrayBg = node.strokes;
+                                containsDualOutline(arrayBg, "type", "SOLID", "visible", true, node);
                             }
                             if (node.visible === true && node.strokeWeight === 1 && node.fills.length === 0 && node.name !== 'Bounds' && node.name !== 'bounds') {
-                                rectOutlineNoBg(node);
+                                const arrayBg = node.strokes;
+                                containsDualOutline(arrayBg, "type", "SOLID", "visible", true, node);
                             }
                         }
                         if (node.type === 'ELLIPSE') {
@@ -239,8 +269,12 @@ setTimeout(function () {
                     let frameWidth = Math.max(...arrayWidth);
                     let frameheight = Math.max(...arrayHeight);
                     frame.resize(frameWidth, frameheight);
-                    frame.x = frameWidth + 100;
-                    frame.y = frameheight - frameheight;
+                    frame.x = frameX + frameWidth + 100;
+                    frame.y = frameY;
+                    figma.group(arrayAll, frame);
+                    const location = figma.group(arrayAll, frame);
+                    location.x = 0;
+                    location.y = 0;
                 }
                 recurse(nodes);
                 figma.closePlugin();
