@@ -3,6 +3,7 @@ setTimeout(function () {
     const nodes = figma.currentPage.selection;
     let selectedLayers = nodes;
     let nodesParent = nodes;
+    // arrays for storing heights, widths, and new items created by the plugin
     let arrayParentX = [];
     let arrayParentY = [];
     let arrayAll = [];
@@ -14,6 +15,7 @@ setTimeout(function () {
     }
     else {
         nodesParent.forEach(mainParent => {
+            // ensure that we only fire the plugin when frames, components or instances are selected
             if (mainParent.type === 'FRAME' || mainParent.type === 'INSTANCE' || mainParent.type === 'COMPONENT') {
                 const frameX = mainParent.x;
                 const frameY = mainParent.y;
@@ -147,6 +149,7 @@ setTimeout(function () {
                     frame.appendChild(poly);
                     arrayAll.push(poly);
                 }
+                // these functions dive deeper into the configuration of layers - sometimes layers have fills but arent visible for example
                 function containsBg(arr, key, val, obj) {
                     for (var i = 0; i < arr.length; i++) {
                         if (arr[i][key] === val)
@@ -266,11 +269,13 @@ setTimeout(function () {
                             }
                         });
                     });
+                    // some math for determining the new size of the created frame
                     let frameWidth = Math.max(...arrayWidth);
                     let frameheight = Math.max(...arrayHeight);
                     frame.resize(frameWidth, frameheight);
                     frame.x = frameX + frameWidth + 100;
                     frame.y = frameY;
+                    // group all the newly created layers, which are then placed at 0 0 so everythings neat and tidy
                     figma.group(arrayAll, frame);
                     const location = figma.group(arrayAll, frame);
                     location.x = 0;
