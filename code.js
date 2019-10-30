@@ -180,6 +180,7 @@ setTimeout(function () {
                                 containsBg(arrayBg, "visible", true, node);
                             }
                         }
+                        // I check the with and height of the nodes as sometimes they can have a 0 height or width - which might just be a bug from Figmas end
                         if (node.type === 'VECTOR') {
                             if (node.visible === true && node.width >= 0.1 && node.height >= 0.1) {
                                 vectorOutline(node);
@@ -222,6 +223,7 @@ setTimeout(function () {
                     let arrayWidth = [];
                     let arrayHeight = [];
                     parents.forEach(parent => {
+                        // I check 3 levels of depth for each node - the current node, its parent, and its grandparent. The Figma will return a node as visible, however its parent, for example, might not be. If so we don't want to render said node.
                         drawItems(parent, parent, parent);
                         arrayWidth.push(parent.width);
                         arrayHeight.push(parent.height);
