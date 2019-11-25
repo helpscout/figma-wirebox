@@ -28,8 +28,8 @@ setTimeout(function () {
                 arrayPageWidth.push(pageWidth);
                 let finalPagePosX = Math.max(...arrayPagePosX);
                 let finalPagePosY = Math.min(...arrayPagePosY);
-                console.log(finalPagePosX);
-                console.log(finalPagePosY);
+                // console.log(finalPagePosX)
+                // console.log(finalPagePosY)
             }
         });
         nodesParent.forEach(mainParent => {
