@@ -3,10 +3,14 @@ setTimeout(function () {
     const nodes = figma.currentPage.selection;
     let selectedLayers = nodes;
     let nodesParent = nodes;
+    let entirePage = figma.currentPage.children;
     // Arrays for storing heights, widths, and new items created by the plugin
     let arrayParentX = [];
     let arrayParentY = [];
     let arrayAll = [];
+    let arrayPagePosX = [];
+    let arrayPagePosY = [];
+    let arrayPageWidth = [];
     function errorMsg() {
         figma.closePlugin('⚠️ Please select a Frame, Component, or Instance to run Wire Box ⚠️');
     }
@@ -14,6 +18,20 @@ setTimeout(function () {
         errorMsg();
     }
     else {
+        entirePage.forEach(pageFrame => {
+            if (pageFrame.type === 'FRAME') {
+                let pageX = pageFrame.x;
+                let pageY = pageFrame.y;
+                let pageWidth = pageFrame.width;
+                arrayPagePosX.push(pageX);
+                arrayPagePosY.push(pageY);
+                arrayPageWidth.push(pageWidth);
+                let finalPagePosX = Math.max(...arrayPagePosX);
+                let finalPagePosY = Math.min(...arrayPagePosY);
+                console.log(finalPagePosX);
+                console.log(finalPagePosY);
+            }
+        });
         nodesParent.forEach(mainParent => {
             // Ensure that we only fire the plugin when frames, components or instances are selected
             if (mainParent.type === 'FRAME' || mainParent.type === 'INSTANCE' || mainParent.type === 'COMPONENT') {
@@ -107,11 +125,17 @@ setTimeout(function () {
                     else {
                         textBlock.fontSize = 14;
                     }
-                    textBlock.lineHeight = node.lineHeight;
-                    textBlock.paragraphSpacing = node.paragraphSpacing;
+                    if (node.lineHeight !== figma.mixed) {
+                        textBlock.lineHeight = node.lineHeight;
+                    }
+                    if (node.paragraphSpacing !== figma.mixed) {
+                        textBlock.paragraphSpacing = node.paragraphSpacing;
+                    }
                     textBlock.textAlignHorizontal = node.textAlignHorizontal;
                     textBlock.textAlignVertical = node.textAlignVertical;
-                    textBlock.textCase = node.textCase;
+                    if (node.textCase !== figma.mixed) {
+                        textBlock.textCase = node.textCase;
+                    }
                     frame.appendChild(textBlock);
                     arrayAll.push(textBlock);
                 }
