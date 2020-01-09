@@ -231,82 +231,64 @@ setTimeout(function(){
 
         // These functions dive deeper into the configuration of layers - sometimes layers have fills but arent visible for example
 
-        function containsBg(arr,key,val,obj) {
-          for (var i = 0; i < arr.length; i++) {
-              if(arr[i][key] === val) return rectOutline(obj);
-          }
-          return false;
+        function convertBackgroundsToOutlines(backgrounds) {
+          backgrounds.forEach(background => {
+            if (background.visible) rectOutline(background)
+          })
         }
 
-        function containsDual(arr,key,val,key2,val2,obj) {
-          for (var i = 0; i < arr.length; i++) {
-              if(arr[i][key] === val && arr[i][key2] === val2 ) return rectOutline(obj);
-          }
-          return false;
+        function convertFillsToOutlines(fills) {
+          fills.forEach(fill => {
+            if (fill.visible && (fill.type === 'SOLID' || fill.type === 'IMAGE')) rectOutline(fill)
+          })
         }
 
-        function containsDualOutline(arr,key,val,key2,val2,obj) {
-          for (var i = 0; i < arr.length; i++) {
-              if(arr[i][key] === val && arr[i][key2] === val2 ) return rectOutlineNoBg(obj);
-          }
-          return false;
+        function convertStrokesToOutlines(strokes) {
+          strokes.forEach(stroke => {
+            if (stroke.visible && stroke.type === 'SOLID') rectOutlineNoBg(stroke)
+          })
         }
 
         // Determine parameters for showing
 
-        function drawItems(node,nodeParent,nodeGrandParent) {
+        function drawNode(node) {
+          if (node.type === 'INSTANCE' || node.type ==='COMPONENT') {
+            convertBackgroundsToOutlines(node.backgrounds) 
+          }
 
-          if(nodeParent.visible === true && nodeGrandParent.visible === true) {
-            if (node.type === 'INSTANCE' || node.type ==='COMPONENT') {
-              if (node.visible === true ) {
+          // Check the width and height of the nodes as sometimes they can have a 0 height or width - which might just be a bug from Figmas end
 
-                const arrayBg = node.backgrounds
-                containsBg(arrayBg,"visible",true,node) 
-              }
+          if (node.type === 'VECTOR') {
+            if (node.width >= 0.1 && node.height >= 0.1) {       
+              vectorOutline(node)
+            }
+          }
+          if (node.type === 'POLYGON') {
+            if (node.width >= 0.1 && node.height >= 0.1) {       
+              polygonOutline(node)
+            }
+          }
+          if (node.type === 'RECTANGLE') {      
+            if (node.fills.length >=1 && node.width >= 0.1 && node.height >= 0.1 && node.opacity >= 0.9 && node.isMask !== true && node.name !== 'Bounds' && node.name !== 'bounds') {
+
+              convertFillsToOutlines(node.fills)
+              
+            }
+            if (node.strokeWeight >= 1.1 && node.name !== 'Bounds' && node.name !== 'bounds') {
+              convertStrokesToOutlines(node.strokes)
+              
             }
 
-            // Check the width and height of the nodes as sometimes they can have a 0 height or width - which might just be a bug from Figmas end
-
-            if (node.type === 'VECTOR') {
-              if (node.visible === true && node.width >= 0.1 && node.height >= 0.1) {       
-                vectorOutline(node)
-              }
+            if (node.strokeWeight === 1 && node.fills.length === 0 && node.name !== 'Bounds' && node.name !== 'bounds') {
+              convertStrokesToOutlines(node.strokes)
+              
             }
-            if (node.type === 'POLYGON') {
-              if (node.visible === true && node.width >= 0.1 && node.height >= 0.1) {       
-                polygonOutline(node)
-              }
-            }
-            if (node.type === 'RECTANGLE') {      
-              if (node.visible === true && node.fills.length >=1 && node.width >= 0.1 && node.height >= 0.1 && node.opacity >= 0.9 && node.isMask !== true && node.name !== 'Bounds' && node.name !== 'bounds') {
-                
-                const arrayBg = node.fills 
-                containsDual(arrayBg,"type","SOLID","visible",true,node)
-                containsDual(arrayBg,"type","IMAGE","visible",true,node) 
-                
-              }
-              if (node.visible === true && node.strokeWeight >= 1.1 && node.name !== 'Bounds' && node.name !== 'bounds') {
-                const arrayBg = node.strokes
-                containsDualOutline(arrayBg,"type","SOLID","visible",true,node)
-                
-              }
-
-              if (node.visible === true && node.strokeWeight === 1 && node.fills.length === 0 && node.name !== 'Bounds' && node.name !== 'bounds') {
-                const arrayBg = node.strokes
-                containsDualOutline(arrayBg,"type","SOLID","visible",true,node)
-                
-              }
-            }
-            if (node.type === 'ELLIPSE') {      
-              if (node.visible === true && node.width >= 0.1 && node.height >= 0.1) {
-                ellipseOutline(node)
-              }
-            }
-            if (node.type === 'TEXT') {  
-              if (node.visible === true && node.width >= 0.1 && node.height >= 0.1) {
-                textOutline(node)
-              }
-            }
+          }
+          if (node.type === 'ELLIPSE' && node.width >= 0.1 && node.height >= 0.1) {
+            ellipseOutline(node)
+          }
+          if (node.type === 'TEXT' && node.width >= 0.1 && node.height >= 0.1) {
+            textOutline(node)
           }
         }
 
@@ -316,68 +298,26 @@ setTimeout(function(){
 
           let arrayWidth = []
           let arrayHeight = []
+
+          function drawChildren(children) {
+            children.forEach(child => {
+              if (!child.visible) return
+              drawNode(child)
+
+              if ("children" in child) drawChildren(child.children)
+            })
+          }
           
           parents.forEach(parent => {
-
+            if (!parent.visible) return
             // Checks 3 levels of depth for each node - the current node, its parent, and its grandparent. The Figma API will return a node as visible, however its parent, for example, might not be. If so we don't want to render said node.
 
-            drawItems(parent,parent,parent)
+            drawNode(parent)
 
             arrayWidth.push(parent.width)
             arrayHeight.push(parent.height)
 
-            parent.children.forEach(child => {
-
-              drawItems(child,parent,parent)
-
-              if ( "children" in child) {
-                child.children.forEach(granchild => {
-                  drawItems(granchild,child,parent)
-
-                  if ( "children" in granchild) {
-                    granchild.children.forEach(greatgranchild => {
-                      drawItems(greatgranchild,granchild,child)
-
-                      if ( "children" in greatgranchild) {
-                        greatgranchild.children.forEach(greatgreatgranchild => {
-                          drawItems(greatgreatgranchild,greatgranchild,granchild)
-
-                          if ( "children" in greatgreatgranchild) {
-                            greatgreatgranchild.children.forEach(greatThreegranchild => {
-                              drawItems(greatThreegranchild,greatgreatgranchild,greatgranchild)
-
-                              if ( "children" in greatThreegranchild) {
-                                greatThreegranchild.children.forEach(greatFourgranchild => {
-                                  drawItems(greatFourgranchild,greatThreegranchild,greatgreatgranchild)
-
-                                  if ("children" in greatFourgranchild) {
-                                    greatFourgranchild.children.forEach(greatFivegranchild => {
-                                      drawItems(greatFivegranchild,greatFourgranchild,greatThreegranchild)
-
-                                      if ("children" in greatFivegranchild) {
-                                        greatFivegranchild.children.forEach(greatSixgranchild => {
-                                          drawItems(greatSixgranchild,greatFivegranchild,greatFourgranchild)
-
-                                          if ("children" in greatSixgranchild) {
-                                            greatSixgranchild.children.forEach(greatSevengranchild => {
-                                              drawItems(greatSevengranchild,greatSixgranchild,greatFivegranchild)
-                                            })
-                                          }
-                                        })
-                                      }
-                                    })
-                                  }
-                                })
-                              }
-                            })
-                          }
-                        })
-                      }
-                    })
-                  }
-                });
-              }
-            })
+            drawChildren(parent.children)
           })
 
           // Some math for determining the new size of the created frame
