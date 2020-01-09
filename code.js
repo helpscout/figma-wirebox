@@ -1,16 +1,16 @@
 figma.loadFontAsync({ family: "Roboto", style: "Regular" });
 setTimeout(function () {
-    const nodes = figma.currentPage.selection;
-    let selectedLayers = nodes;
-    let nodesParent = nodes;
-    let entirePage = figma.currentPage.children;
+    var nodes = figma.currentPage.selection;
+    var selectedLayers = nodes;
+    var nodesParent = nodes;
+    var entirePage = figma.currentPage.children;
     // Arrays for storing heights, widths, and new items created by the plugin
-    let arrayParentX = [];
-    let arrayParentY = [];
-    let arrayAll = [];
-    let arrayPagePosX = [];
-    let arrayPagePosY = [];
-    let arrayPageWidth = [];
+    var arrayParentX = [];
+    var arrayParentY = [];
+    var arrayAll = [];
+    var arrayPagePosX = [];
+    var arrayPagePosY = [];
+    var arrayPageWidth = [];
     function errorMsg() {
         figma.closePlugin('⚠️ Please select a Frame, Component, or Instance to run Wire Box ⚠️');
     }
@@ -18,107 +18,107 @@ setTimeout(function () {
         errorMsg();
     }
     else {
-        entirePage.forEach(pageFrame => {
+        entirePage.forEach(function (pageFrame) {
             if (pageFrame.type === 'FRAME') {
-                let pageX = pageFrame.x;
-                let pageY = pageFrame.y;
-                let pageWidth = pageFrame.width;
+                var pageX = pageFrame.x;
+                var pageY = pageFrame.y;
+                var pageWidth = pageFrame.width;
                 arrayPagePosX.push(pageX);
                 arrayPagePosY.push(pageY);
                 arrayPageWidth.push(pageWidth);
-                let finalPagePosX = Math.max(...arrayPagePosX);
-                let finalPagePosY = Math.min(...arrayPagePosY);
+                var finalPagePosX = Math.max.apply(Math, arrayPagePosX);
+                var finalPagePosY = Math.min.apply(Math, arrayPagePosY);
                 // console.log(finalPagePosX)
                 // console.log(finalPagePosY)
             }
         });
-        nodesParent.forEach(mainParent => {
+        nodesParent.forEach(function (mainParent) {
             // Ensure that we only fire the plugin when frames, components or instances are selected
             if (mainParent.type === 'FRAME' || mainParent.type === 'INSTANCE' || mainParent.type === 'COMPONENT') {
-                const frameX = mainParent.x;
-                const frameY = mainParent.y;
-                arrayParentX.push(frameX);
-                arrayParentY.push(frameY);
-                const frame = figma.createFrame();
-                const pink1 = 1;
-                const pink2 = 0.15;
-                const pink3 = 0.8;
-                frame.name = "Wire Box";
-                frame.clipsContent = false;
+                var frameX_1 = mainParent.x;
+                var frameY_1 = mainParent.y;
+                arrayParentX.push(frameX_1);
+                arrayParentY.push(frameY_1);
+                var frame_1 = figma.createFrame();
+                var pink1_1 = 1;
+                var pink2_1 = 0.15;
+                var pink3_1 = 0.8;
+                frame_1.name = "Wire Box";
+                frame_1.clipsContent = false;
                 // Define shape types
                 function rectOutline(node) {
-                    const rect = figma.createRectangle();
-                    let transformPos = node.absoluteTransform;
-                    let newX = transformPos[0][2];
-                    let newY = transformPos[1][2];
+                    var rect = figma.createRectangle();
+                    var transformPos = node.absoluteTransform;
+                    var newX = transformPos[0][2];
+                    var newY = transformPos[1][2];
                     rect.name = node.name;
                     rect.x = newX;
                     rect.y = newY;
                     rect.rotation = node.rotation;
                     rect.resize(node.width, node.height);
                     rect.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
-                    rect.strokes = [{ type: 'SOLID', color: { r: pink1, g: pink2, b: pink3 } }];
+                    rect.strokes = [{ type: 'SOLID', color: { r: pink1_1, g: pink2_1, b: pink3_1 } }];
                     if (node.topLeftRadius >= 1 || node.topRightRadius >= 1 || node.bottomLeftRadius >= 1 || node.bottomRightRadius >= 1) {
                         rect.topRightRadius = node.topRightRadius;
                         rect.topLeftRadius = node.topLeftRadius;
                         rect.bottomLeftRadius = node.bottomLeftRadius;
                         rect.bottomRightRadius = node.bottomRightRadius;
                     }
-                    frame.appendChild(rect);
+                    frame_1.appendChild(rect);
                     arrayAll.push(rect);
                 }
                 function rectOutlineNoBg(node) {
-                    const rect = figma.createRectangle();
-                    let transformPos = node.absoluteTransform;
-                    let newX = transformPos[0][2];
-                    let newY = transformPos[1][2];
+                    var rect = figma.createRectangle();
+                    var transformPos = node.absoluteTransform;
+                    var newX = transformPos[0][2];
+                    var newY = transformPos[1][2];
                     rect.name = node.name;
                     rect.x = newX;
                     rect.y = newY;
                     rect.rotation = node.rotation;
                     rect.resize(node.width, node.height);
                     rect.fills = [];
-                    rect.strokes = [{ type: 'SOLID', color: { r: pink1, g: pink2, b: pink3 } }];
+                    rect.strokes = [{ type: 'SOLID', color: { r: pink1_1, g: pink2_1, b: pink3_1 } }];
                     if (node.topLeftRadius >= 1 || node.topRightRadius >= 1 || node.bottomLeftRadius >= 1 || node.bottomRightRadius >= 1) {
                         rect.topRightRadius = node.topRightRadius;
                         rect.topLeftRadius = node.topLeftRadius;
                         rect.bottomLeftRadius = node.bottomLeftRadius;
                         rect.bottomRightRadius = node.bottomRightRadius;
                     }
-                    frame.appendChild(rect);
+                    frame_1.appendChild(rect);
                     arrayAll.push(rect);
                 }
                 function vectorOutline(node) {
-                    const vect = figma.createVector();
-                    const height = node.height;
-                    const width = node.width;
-                    let transformPos = node.absoluteTransform;
-                    let newX = transformPos[0][2];
-                    let newY = transformPos[1][2];
+                    var vect = figma.createVector();
+                    var height = node.height;
+                    var width = node.width;
+                    var transformPos = node.absoluteTransform;
+                    var newX = transformPos[0][2];
+                    var newY = transformPos[1][2];
                     vect.rotation = node.rotation;
                     vect.resize(width, height);
                     vect.vectorNetwork = node.vectorNetwork;
                     vect.x = newX;
                     vect.y = newY;
                     vect.strokeWeight = 1;
-                    vect.strokes = [{ type: 'SOLID', color: { r: pink1, g: pink2, b: pink3 } }];
-                    frame.appendChild(vect);
+                    vect.strokes = [{ type: 'SOLID', color: { r: pink1_1, g: pink2_1, b: pink3_1 } }];
+                    frame_1.appendChild(vect);
                     arrayAll.push(vect);
                 }
                 function textOutline(node) {
-                    const textBlock = figma.createText();
-                    const height = node.height;
-                    const width = node.width;
-                    let transformPos = node.absoluteTransform;
-                    let newX = transformPos[0][2];
-                    let newY = transformPos[1][2];
+                    var textBlock = figma.createText();
+                    var height = node.height;
+                    var width = node.width;
+                    var transformPos = node.absoluteTransform;
+                    var newX = transformPos[0][2];
+                    var newY = transformPos[1][2];
                     textBlock.rotation = node.rotation;
                     textBlock.name = node.name;
                     textBlock.resize(width, height);
                     textBlock.x = newX;
                     textBlock.y = newY;
                     textBlock.characters = node.characters;
-                    textBlock.fills = [{ type: 'SOLID', color: { r: pink1, g: pink2, b: pink3 } }];
+                    textBlock.fills = [{ type: 'SOLID', color: { r: pink1_1, g: pink2_1, b: pink3_1 } }];
                     if (node.fontSize !== figma.mixed) {
                         textBlock.fontSize = node.fontSize;
                     }
@@ -136,174 +136,132 @@ setTimeout(function () {
                     if (node.textCase !== figma.mixed) {
                         textBlock.textCase = node.textCase;
                     }
-                    frame.appendChild(textBlock);
+                    frame_1.appendChild(textBlock);
                     arrayAll.push(textBlock);
                 }
                 function ellipseOutline(node) {
-                    const ellip = figma.createEllipse();
-                    const height = node.height;
-                    const width = node.width;
-                    let transformPos = node.absoluteTransform;
-                    let newX = transformPos[0][2];
-                    let newY = transformPos[1][2];
+                    var ellip = figma.createEllipse();
+                    var height = node.height;
+                    var width = node.width;
+                    var transformPos = node.absoluteTransform;
+                    var newX = transformPos[0][2];
+                    var newY = transformPos[1][2];
                     ellip.rotation = node.rotation;
                     ellip.resize(width, height);
                     ellip.x = newX;
                     ellip.y = newY;
                     ellip.strokeWeight = 1;
                     ellip.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
-                    ellip.strokes = [{ type: 'SOLID', color: { r: pink1, g: pink2, b: pink3 } }];
-                    frame.appendChild(ellip);
+                    ellip.strokes = [{ type: 'SOLID', color: { r: pink1_1, g: pink2_1, b: pink3_1 } }];
+                    frame_1.appendChild(ellip);
                     arrayAll.push(ellip);
                 }
                 function polygonOutline(node) {
-                    const poly = figma.createPolygon();
-                    const height = node.height;
-                    const width = node.width;
-                    let transformPos = node.absoluteTransform;
-                    let newX = transformPos[0][2];
-                    let newY = transformPos[1][2];
+                    var poly = figma.createPolygon();
+                    var height = node.height;
+                    var width = node.width;
+                    var transformPos = node.absoluteTransform;
+                    var newX = transformPos[0][2];
+                    var newY = transformPos[1][2];
                     poly.rotation = node.rotation;
                     poly.resize(width, height);
                     poly.x = newX;
                     poly.y = newY;
                     poly.strokeWeight = 1;
                     poly.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
-                    poly.strokes = [{ type: 'SOLID', color: { r: pink1, g: pink2, b: pink3 } }];
-                    frame.appendChild(poly);
+                    poly.strokes = [{ type: 'SOLID', color: { r: pink1_1, g: pink2_1, b: pink3_1 } }];
+                    frame_1.appendChild(poly);
                     arrayAll.push(poly);
                 }
                 // These functions dive deeper into the configuration of layers - sometimes layers have fills but arent visible for example
-                function containsBg(arr, key, val, obj) {
-                    for (var i = 0; i < arr.length; i++) {
-                        if (arr[i][key] === val)
-                            return rectOutline(obj);
-                    }
-                    return false;
+                function hasVisibleBackgrounds(backgrounds) {
+                    return backgrounds.find(function (background) { return background.visible; });
                 }
-                function containsDual(arr, key, val, key2, val2, obj) {
-                    for (var i = 0; i < arr.length; i++) {
-                        if (arr[i][key] === val && arr[i][key2] === val2)
-                            return rectOutline(obj);
-                    }
-                    return false;
+                function hasVisibleFills(fills) {
+                    return fills.find(function (fill) { return fill.visible && (fill.type === 'SOLID' || fill.type === 'IMAGE'); });
                 }
-                function containsDualOutline(arr, key, val, key2, val2, obj) {
-                    for (var i = 0; i < arr.length; i++) {
-                        if (arr[i][key] === val && arr[i][key2] === val2)
-                            return rectOutlineNoBg(obj);
-                    }
-                    return false;
+                function hasVisibleStrokes(strokes) {
+                    return strokes.find(function (stroke) { return stroke.visible && stroke.type === 'SOLID'; });
                 }
                 // Determine parameters for showing
-                function drawItems(node, nodeParent, nodeGrandParent) {
-                    if (nodeParent.visible === true && nodeGrandParent.visible === true) {
-                        if (node.type === 'INSTANCE' || node.type === 'COMPONENT') {
-                            if (node.visible === true) {
-                                const arrayBg = node.backgrounds;
-                                containsBg(arrayBg, "visible", true, node);
-                            }
+                function drawNode(node) {
+                    if ((node.type === 'INSTANCE' || node.type === 'COMPONENT') && hasVisibleBackgrounds(node.backgrounds)) {
+                        rectOutline(node);
+                    }
+                    // Check the width and height of the nodes as sometimes they can have a 0 height or width - which might just be a bug from Figmas end
+                    if (node.type === 'VECTOR') {
+                        if (node.width >= 0.1 && node.height >= 0.1) {
+                            vectorOutline(node);
                         }
-                        // Check the width and height of the nodes as sometimes they can have a 0 height or width - which might just be a bug from Figmas end
-                        if (node.type === 'VECTOR') {
-                            if (node.visible === true && node.width >= 0.1 && node.height >= 0.1) {
-                                vectorOutline(node);
-                            }
+                    }
+                    if (node.type === 'POLYGON') {
+                        if (node.width >= 0.1 && node.height >= 0.1) {
+                            polygonOutline(node);
                         }
-                        if (node.type === 'POLYGON') {
-                            if (node.visible === true && node.width >= 0.1 && node.height >= 0.1) {
-                                polygonOutline(node);
-                            }
+                    }
+                    if (node.type === 'RECTANGLE') {
+                        if (node.fills.length >= 1 &&
+                            node.width >= 0.1 &&
+                            node.height >= 0.1 &&
+                            node.opacity >= 0.9 &&
+                            node.isMask !== true &&
+                            node.name !== 'Bounds' &&
+                            node.name !== 'bounds' &&
+                            hasVisibleFills(node.fills)) {
+                            rectOutline(node);
                         }
-                        if (node.type === 'RECTANGLE') {
-                            if (node.visible === true && node.fills.length >= 1 && node.width >= 0.1 && node.height >= 0.1 && node.opacity >= 0.9 && node.isMask !== true && node.name !== 'Bounds' && node.name !== 'bounds') {
-                                const arrayBg = node.fills;
-                                containsDual(arrayBg, "type", "SOLID", "visible", true, node);
-                                containsDual(arrayBg, "type", "IMAGE", "visible", true, node);
-                            }
-                            if (node.visible === true && node.strokeWeight >= 1.1 && node.name !== 'Bounds' && node.name !== 'bounds') {
-                                const arrayBg = node.strokes;
-                                containsDualOutline(arrayBg, "type", "SOLID", "visible", true, node);
-                            }
-                            if (node.visible === true && node.strokeWeight === 1 && node.fills.length === 0 && node.name !== 'Bounds' && node.name !== 'bounds') {
-                                const arrayBg = node.strokes;
-                                containsDualOutline(arrayBg, "type", "SOLID", "visible", true, node);
-                            }
+                        if (node.strokeWeight >= 1.1 &&
+                            node.name !== 'Bounds' &&
+                            node.name !== 'bounds' &&
+                            hasVisibleStrokes(node.strokes)) {
+                            rectOutlineNoBg(node);
                         }
-                        if (node.type === 'ELLIPSE') {
-                            if (node.visible === true && node.width >= 0.1 && node.height >= 0.1) {
-                                ellipseOutline(node);
-                            }
+                        if (node.strokeWeight === 1 &&
+                            node.fills.length === 0 &&
+                            node.name !== 'Bounds' &&
+                            node.name !== 'bounds' &&
+                            hasVisibleStrokes(node.strokes)) {
+                            rectOutlineNoBg(node);
                         }
-                        if (node.type === 'TEXT') {
-                            if (node.visible === true && node.width >= 0.1 && node.height >= 0.1) {
-                                textOutline(node);
-                            }
-                        }
+                    }
+                    if (node.type === 'ELLIPSE' && node.width >= 0.1 && node.height >= 0.1) {
+                        ellipseOutline(node);
+                    }
+                    if (node.type === 'TEXT' && node.width >= 0.1 && node.height >= 0.1) {
+                        textOutline(node);
                     }
                 }
                 // execute
                 function recurse(parents) {
-                    let arrayWidth = [];
-                    let arrayHeight = [];
-                    parents.forEach(parent => {
-                        // Checks 3 levels of depth for each node - the current node, its parent, and its grandparent. The Figma API will return a node as visible, however its parent, for example, might not be. If so we don't want to render said node.
-                        drawItems(parent, parent, parent);
+                    var arrayWidth = [];
+                    var arrayHeight = [];
+                    function drawChildren(children) {
+                        children.forEach(function (child) {
+                            if (!child.visible)
+                                return;
+                            drawNode(child);
+                            // Recursively draw childen
+                            if ("children" in child)
+                                drawChildren(child.children);
+                        });
+                    }
+                    parents.forEach(function (parent) {
+                        if (!parent.visible)
+                            return;
+                        drawNode(parent);
                         arrayWidth.push(parent.width);
                         arrayHeight.push(parent.height);
-                        parent.children.forEach(child => {
-                            drawItems(child, parent, parent);
-                            if ("children" in child) {
-                                child.children.forEach(granchild => {
-                                    drawItems(granchild, child, parent);
-                                    if ("children" in granchild) {
-                                        granchild.children.forEach(greatgranchild => {
-                                            drawItems(greatgranchild, granchild, child);
-                                            if ("children" in greatgranchild) {
-                                                greatgranchild.children.forEach(greatgreatgranchild => {
-                                                    drawItems(greatgreatgranchild, greatgranchild, granchild);
-                                                    if ("children" in greatgreatgranchild) {
-                                                        greatgreatgranchild.children.forEach(greatThreegranchild => {
-                                                            drawItems(greatThreegranchild, greatgreatgranchild, greatgranchild);
-                                                            if ("children" in greatThreegranchild) {
-                                                                greatThreegranchild.children.forEach(greatFourgranchild => {
-                                                                    drawItems(greatFourgranchild, greatThreegranchild, greatgreatgranchild);
-                                                                    if ("children" in greatFourgranchild) {
-                                                                        greatFourgranchild.children.forEach(greatFivegranchild => {
-                                                                            drawItems(greatFivegranchild, greatFourgranchild, greatThreegranchild);
-                                                                            if ("children" in greatFivegranchild) {
-                                                                                greatFivegranchild.children.forEach(greatSixgranchild => {
-                                                                                    drawItems(greatSixgranchild, greatFivegranchild, greatFourgranchild);
-                                                                                    if ("children" in greatSixgranchild) {
-                                                                                        greatSixgranchild.children.forEach(greatSevengranchild => {
-                                                                                            drawItems(greatSevengranchild, greatSixgranchild, greatFivegranchild);
-                                                                                        });
-                                                                                    }
-                                                                                });
-                                                                            }
-                                                                        });
-                                                                    }
-                                                                });
-                                                            }
-                                                        });
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
+                        drawChildren(parent.children);
                     });
                     // Some math for determining the new size of the created frame
-                    let frameWidth = Math.max(...arrayWidth);
-                    let frameheight = Math.max(...arrayHeight);
-                    frame.resize(frameWidth, frameheight);
-                    frame.x = frameX + frameWidth + 100;
-                    frame.y = frameY;
+                    var frameWidth = Math.max.apply(Math, arrayWidth);
+                    var frameheight = Math.max.apply(Math, arrayHeight);
+                    frame_1.resize(frameWidth, frameheight);
+                    frame_1.x = frameX_1 + frameWidth + 100;
+                    frame_1.y = frameY_1;
                     // Group all the newly created layers, which are then placed at 0x 0y so everythings neat and tidy
-                    figma.group(arrayAll, frame);
-                    const location = figma.group(arrayAll, frame);
+                    figma.group(arrayAll, frame_1);
+                    var location = figma.group(arrayAll, frame_1);
                     location.x = 0;
                     location.y = 0;
                 }
