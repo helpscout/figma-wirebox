@@ -231,29 +231,23 @@ setTimeout(function(){
 
         // These functions dive deeper into the configuration of layers - sometimes layers have fills but arent visible for example
 
-        function convertBackgroundsToOutlines(backgrounds) {
-          backgrounds.forEach(background => {
-            if (background.visible) rectOutline(background)
-          })
+        function hasVisibleBackgrounds(backgrounds) {
+          return backgrounds.find(background => background.visible)
         }
 
-        function convertFillsToOutlines(fills) {
-          fills.forEach(fill => {
-            if (fill.visible && (fill.type === 'SOLID' || fill.type === 'IMAGE')) rectOutline(fill)
-          })
+        function hasVisibleFills(fills) {
+          return fills.find(fill => fill.visible && (fill.type === 'SOLID' || fill.type === 'IMAGE'))
         }
 
-        function convertStrokesToOutlines(strokes) {
-          strokes.forEach(stroke => {
-            if (stroke.visible && stroke.type === 'SOLID') rectOutlineNoBg(stroke)
-          })
+        function hasVisibleStrokes(strokes) {
+          return strokes.find(stroke => stroke.visible && stroke.type === 'SOLID')
         }
 
         // Determine parameters for showing
 
         function drawNode(node) {
-          if (node.type === 'INSTANCE' || node.type ==='COMPONENT') {
-            convertBackgroundsToOutlines(node.backgrounds) 
+          if ((node.type === 'INSTANCE' || node.type ==='COMPONENT') && hasVisibleBackgrounds(node.backgrounds)) {
+            rectOutline(node)
           }
 
           // Check the width and height of the nodes as sometimes they can have a 0 height or width - which might just be a bug from Figmas end
@@ -269,18 +263,37 @@ setTimeout(function(){
             }
           }
           if (node.type === 'RECTANGLE') {      
-            if (node.fills.length >=1 && node.width >= 0.1 && node.height >= 0.1 && node.opacity >= 0.9 && node.isMask !== true && node.name !== 'Bounds' && node.name !== 'bounds') {
+            if (
+              node.fills.length >=1 &&
+              node.width >= 0.1 &&
+              node.height >= 0.1 &&
+              node.opacity >= 0.9 &&
+              node.isMask !== true &&
+              node.name !== 'Bounds' &&
+              node.name !== 'bounds' &&
+              hasVisibleFills(node.fills)
+            ) {
 
-              convertFillsToOutlines(node.fills)
+              rectOutline(node)
               
             }
-            if (node.strokeWeight >= 1.1 && node.name !== 'Bounds' && node.name !== 'bounds') {
-              convertStrokesToOutlines(node.strokes)
-              
+            if (
+              node.strokeWeight >= 1.1 &&
+              node.name !== 'Bounds' &&
+              node.name !== 'bounds' &&
+              hasVisibleStrokes(node.strokes)
+            ) {
+              rectOutlineNoBg(node)
             }
 
-            if (node.strokeWeight === 1 && node.fills.length === 0 && node.name !== 'Bounds' && node.name !== 'bounds') {
-              convertStrokesToOutlines(node.strokes)
+            if (
+              node.strokeWeight === 1 &&
+              node.fills.length === 0 &&
+              node.name !== 'Bounds' &&
+              node.name !== 'bounds' &&
+              hasVisibleStrokes(node.strokes)
+            ) {
+              rectOutlineNoBg(node)
               
             }
           }
@@ -304,13 +317,13 @@ setTimeout(function(){
               if (!child.visible) return
               drawNode(child)
 
+              // Recursively draw childen
               if ("children" in child) drawChildren(child.children)
             })
           }
           
           parents.forEach(parent => {
             if (!parent.visible) return
-            // Checks 3 levels of depth for each node - the current node, its parent, and its grandparent. The Figma API will return a node as visible, however its parent, for example, might not be. If so we don't want to render said node.
 
             drawNode(parent)
 
