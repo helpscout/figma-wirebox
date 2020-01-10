@@ -60,7 +60,7 @@ setTimeout(function(){
         const pink2 = 0.15
         const pink3 = 0.8
         frame.name = "Wire Box / " + mainParent.name
-        frame.clipsContent = false
+        frame.clipsContent = true
 
         // Define shape types
 
