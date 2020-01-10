@@ -7,8 +7,6 @@ setTimeout(function(){
   let nodesParent = nodes
   let entirePage = figma.currentPage.children
 
-  // Arrays for storing heights, widths, and new items created by the plugin
-
   let arrayParentX = []
   let arrayParentY = []
   let arrayAll = []
@@ -17,7 +15,7 @@ setTimeout(function(){
   let arrayPageWidth = []
 
   function errorMsg() {
-    figma.closePlugin('⚠️ Please select a Frame, Component, or Instance to run Wire Box ⚠️');
+    figma.closePlugin('⚠️ Please select a Frame to run Wire Box ⚠️');
   }
 
   if (selectedLayers.length === 0) {
@@ -41,18 +39,15 @@ setTimeout(function(){
 
         let finalPagePosX = Math.max(...arrayPagePosX)
         let finalPagePosY = Math.min(...arrayPagePosY)
-
-        // console.log(finalPagePosX)
-        // console.log(finalPagePosY)
         
       } 
     });
     
     nodesParent.forEach(mainParent => {
 
-      // Ensure that we only fire the plugin when frames, components or instances are selected
+      // Ensure that we only fire the plugin when a Frame is selected
       
-      if (mainParent.type === 'FRAME' || mainParent.type === 'INSTANCE' || mainParent.type === 'COMPONENT') {
+      if (mainParent.type === 'FRAME') {
 
         const frameX = mainParent.x
         const frameY = mainParent.y
@@ -64,7 +59,7 @@ setTimeout(function(){
         const pink1 = 1
         const pink2 = 0.15
         const pink3 = 0.8
-        frame.name = "Wire Box"
+        frame.name = "Wire Box / " + mainParent.name
         frame.clipsContent = false
 
         // Define shape types
@@ -120,7 +115,6 @@ setTimeout(function(){
           frame.appendChild(rect)
           arrayAll.push(rect)
         }
-
 
         function vectorOutline(node) {
           const vect = figma.createVector()
@@ -229,7 +223,7 @@ setTimeout(function(){
           arrayAll.push(poly)
         }
 
-        // These functions dive deeper into the configuration of layers - sometimes layers have fills but arent visible for example
+        // These functions dive deeper into the configuration of layers - sometimes layers have fills but arent visible
 
         function hasVisibleBackgrounds(backgrounds) {
           return backgrounds.find(background => background.visible)
@@ -246,19 +240,19 @@ setTimeout(function(){
         // Determine parameters for showing
 
         function drawNode(node) {
-          if ((node.type === 'INSTANCE' || node.type ==='COMPONENT') && hasVisibleBackgrounds(node.backgrounds)) {
+          if ((node.type === 'INSTANCE' || node.type === 'FRAME' || node.type ==='COMPONENT') && hasVisibleBackgrounds(node.backgrounds)) {
             rectOutline(node)
           }
 
           // Check the width and height of the nodes as sometimes they can have a 0 height or width - which might just be a bug from Figmas end
 
           if (node.type === 'VECTOR') {
-            if (node.width >= 0.1 && node.height >= 0.1) {       
+            if (node.width >= 0.1 && node.height >= 0.1 && node.isMask !== true) {       
               vectorOutline(node)
             }
           }
           if (node.type === 'POLYGON') {
-            if (node.width >= 0.1 && node.height >= 0.1) {       
+            if (node.width >= 0.1 && node.height >= 0.1 && node.isMask !== true) {       
               polygonOutline(node)
             }
           }
@@ -267,7 +261,7 @@ setTimeout(function(){
               node.fills.length >=1 &&
               node.width >= 0.1 &&
               node.height >= 0.1 &&
-              node.opacity >= 0.9 &&
+              node.opacity >= 0.5 &&
               node.isMask !== true &&
               node.name !== 'Bounds' &&
               node.name !== 'bounds' &&
@@ -354,6 +348,7 @@ setTimeout(function(){
         recurse(nodes)
 
         figma.closePlugin()
+        figma.notify("Wire Box created")
 
       } else {
         errorMsg()

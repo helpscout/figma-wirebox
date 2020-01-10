@@ -14,8 +14,3 @@ A Figma plugin to make your designs go from hi-fi to lo-fi
 1. Grab the components or instances or frame you want to convert
 2. Run Wire Box from Plugins > Development > Wire Box
 3. Profit
-
-### To Do
-
-- [ ] More Elegant way to handle sweeping through nested items
-- [ ] Figure out how to resize the newly created frame
