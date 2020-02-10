@@ -2,5 +2,8 @@
   "name": "Wire Box",
   "id": "764471577604277919",
   "api": "1.0.0",
-  "main": "code.js"
+  "main": "code.js",
+  "relaunchButtons": [
+    {"command": "edit", "name": "Wire Box"}
+  ]
 }

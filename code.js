@@ -10,6 +10,7 @@ setTimeout(function () {
     let arrayPagePosX = [];
     let arrayPagePosY = [];
     let arrayPageWidth = [];
+    let frameNames = [];
     function errorMsg() {
         figma.closePlugin('⚠️ Please select a Frame to run Wire Box ⚠️');
     }
@@ -25,6 +26,7 @@ setTimeout(function () {
                 arrayPagePosX.push(pageX);
                 arrayPagePosY.push(pageY);
                 arrayPageWidth.push(pageWidth);
+                frameNames.push(pageFrame.name);
                 let finalPagePosX = Math.max(...arrayPagePosX);
                 let finalPagePosY = Math.min(...arrayPagePosY);
             }
@@ -42,6 +44,7 @@ setTimeout(function () {
                 const pink3 = 0.8;
                 frame.name = "Wire Box / " + mainParent.name;
                 frame.clipsContent = true;
+                frame.setRelaunchData({ edit: "This frame was created with Wire Box, a hi-fi to lo-fi plugin" });
                 // Define shape types
                 function rectOutline(node) {
                     const rect = figma.createRectangle();
@@ -263,6 +266,7 @@ setTimeout(function () {
                     location.y = 0;
                 }
                 recurse(nodes);
+                // console.log(frameNames)
                 figma.closePlugin();
                 figma.notify("Wire Box created");
             }
