@@ -3,7 +3,16 @@
   "id": "764471577604277919",
   "api": "1.0.0",
   "main": "code.js",
+  "editorType": ["figma"],
   "relaunchButtons": [
     {"command": "edit", "name": "Wire Box"}
+  ],
+  "parameterOnly": false,
+  "parameters": [
+    {
+      "name": "Color",
+      "key": "color",
+      "description": "Set the color of the Wire Box you want to add"
+    }
   ]
 }

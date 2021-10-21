@@ -1,0 +1,19 @@
+{
+  "name": "wirebox",
+  "version": "1.0.0",
+  "description": "",
+  "main": "code.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "author": "Figma",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/helpscout/figma-wirebox"
+  },
+  "homepage": "https://github.com/helpscout/figma-wirebox",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.37.0",
+    "@types/node": "^16.11.1"
+  }
+}
